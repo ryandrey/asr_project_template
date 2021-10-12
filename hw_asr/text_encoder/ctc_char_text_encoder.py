@@ -22,13 +22,13 @@ class CTCCharTextEncoder(CharTextEncoder):
         res = []
         new_char = False
         for ind in inds:
-            if self.ind2char[ind] == self.EMPTY_TOK:
+            if self.ind2char[int(ind)] == self.EMPTY_TOK:
                 new_char = True
             else:
                 if len(res) == 0 or new_char or res[-1] != ind:
                     res.append(ind)
                 new_char = False
-        return ''.join(self.ind2char[ind] for ind in res)
+        return ''.join(self.ind2char[int(ind)] for ind in res)
 
     def ctc_beam_search(self, probs: torch.tensor, beam_size: int = 100) -> List[Tuple[str, float]]:
         """
