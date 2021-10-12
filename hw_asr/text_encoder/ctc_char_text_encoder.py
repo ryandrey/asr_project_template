@@ -1,6 +1,7 @@
 from typing import List, Tuple
 
 import torch
+from collections import defaultdict
 
 from hw_asr.text_encoder.char_text_encoder import CharTextEncoder
 
@@ -18,8 +19,16 @@ class CTCCharTextEncoder(CharTextEncoder):
         self.char2ind = {v: k for k, v in self.ind2char.items()}
 
     def ctc_decode(self, inds: List[int]) -> str:
-        # TODO: your code here
-        raise NotImplementedError()
+        res = []
+        new_char = False
+        for ind in inds:
+            if self.ind2char[ind] == self.EMPTY_TOK:
+                new_char = True
+            else:
+                if len(res) == 0 or new_char or res[-1] != ind:
+                    res.append(int)
+                new_char = False
+            return ''.join(self.ind2char[ind] for ind in res)
 
     def ctc_beam_search(self, probs: torch.tensor, beam_size: int = 100) -> List[Tuple[str, float]]:
         """

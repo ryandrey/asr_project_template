@@ -8,5 +8,6 @@ pandas
 speechbrain~=0.5.9
 torchaudio~=0.9.1
 datasets
+matplotlib
 torch_audiomentations
 editdistance
