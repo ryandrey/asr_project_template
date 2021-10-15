@@ -2,7 +2,6 @@ import logging
 from typing import List
 import torch
 import torch.nn as nn
-from collections import defaultdict
 
 logger = logging.getLogger(__name__)
 
@@ -12,17 +11,22 @@ def collate_fn(dataset_items: List[dict]):
     Collate and pad fields in dataset items
     """
 
-    result_batch = defaultdict(list)
-    for item in dataset_items:
-        for key, value in item.items():
-            if key == 'text_encoded' or key == 'spectrogram':
-                result_batch[f"{key}_length"].append(torch.tensor([value.size(-1)]))
-            result_batch[key].append(value.squeeze(0).transpose(0, -1) if torch.is_tensor(value) else value)
+    spec_lengths = [item['spectrogram'].size(-1) for item in dataset_items]
+    text_lengths = [item['text_encoded'].size(-1) for item in dataset_items]
 
-    for key, value in result_batch.items():
-        if torch.is_tensor(value[0]):
-            result_batch[key] = nn.utils.rnn.pad_sequence(value, True).transpose(1, -1)
-            if result_batch[key].size(-1) == 1:
-                result_batch[key] = result_batch[key].squeeze(-1)
+    bs = len(dataset_items)
+    spectrogram_out = torch.zeros((bs, dataset_items[0]['spectrogram'].size(1), max(spec_lengths)))
+    text_out = torch.zeros((bs, max(text_lengths)))
 
+    for i, item in enumerate(dataset_items):
+        spectrogram_out[i, :, :spec_lengths[i]] = item['spectrogram']
+        text_out[i, :text_lengths[i]] = item['text_encoded']
+
+    result_batch = {
+        'spectrogram': spectrogram_out.transpose(1, 2),
+        'spectrogram_length': torch.tensor(spec_lengths),
+        'text_encoded': text_out,
+        'text_encoded_length': torch.tensor(text_lengths),
+        'text': [item['text'] for item in dataset_items]
+    }
     return result_batch
