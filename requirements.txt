@@ -13,3 +13,4 @@ datasets
 matplotlib
 torch_audiomentations
 editdistance
+wandb
