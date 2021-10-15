@@ -14,7 +14,7 @@
     "spectrogram": []
   },
   "arch": {
-    "type": "BaselineModel",
+    "type": "MyLSTM",
     "args": {
       "n_feats": 128,
       "fc_hidden": 512
@@ -28,7 +28,7 @@
         {
           "type": "LibrispeechDataset",
           "args": {
-            "part": "dev_clean",
+            "part": "train-clean-100",
             "max_audio_length": 20.0,
             "max_text_length": 200,
             "limit": 32

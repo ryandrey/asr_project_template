@@ -20,6 +20,8 @@ class CTCCharTextEncoder(CharTextEncoder):
 
     def ctc_decode(self, inds: List[int]) -> str:
         res = []
+        if torch.is_tensor(inds):
+            inds = inds.tolist()
         new_char = False
         for ind in inds:
             if self.ind2char[int(ind)] == self.EMPTY_TOK:
