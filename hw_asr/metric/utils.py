@@ -2,7 +2,7 @@
 import editdistance
 
 
-def calc_cer(target_text, predicted_text) -> float:
+def calc_wer(target_text, predicted_text) -> float:
     t_text = target_text.split()
     p_text = predicted_text.split()
     den = len(t_text)
@@ -11,7 +11,7 @@ def calc_cer(target_text, predicted_text) -> float:
     return editdistance.eval(t_text, p_text) / den
 
 
-def calc_wer(target_text, predicted_text) -> float:
+def calc_cer(target_text, predicted_text) -> float:
     den = len(target_text)
     if target_text == '':
         den = 1
